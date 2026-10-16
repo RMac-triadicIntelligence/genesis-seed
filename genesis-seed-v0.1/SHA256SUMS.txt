@@ -1,0 +1,2 @@
+03e7bd8f72a2fd11727dd022a6b65d9d9d70e50983cc53902a605ab755d890f5  genesis-seed-v0.1.html
+fb2a624f47c3f6ea70a6a6cae2faadf3b769a1c7194aa6b18d063668ce85aa31  README.txt

@@ -1,0 +1,714 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Genesis Seed</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Seed">
+<meta name="theme-color" content="#24695B">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#EDF0EE; --surface:#F8FAF9; --ink:#1C2622; --muted:#5D6B65; --line:#CDD6D1;
+  --seed:#24695B; --seed-soft:#DCEBE6; --owner:#B2741C; --owner-soft:#F4E6CF; --warn:#9B3B32;
+  --serif:"Literata",Georgia,"Noto Serif","Times New Roman",serif;
+  --sans:"Figtree",system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans",sans-serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){
+  --bg:#141917; --surface:#1C2320; --ink:#E4EBE7; --muted:#97A49E; --line:#2F3934;
+  --seed:#6FC2AE; --seed-soft:#1F3631; --owner:#E2A752; --owner-soft:#3A2F1E; --warn:#E07C70; } }
+:root[data-theme="dark"]{
+  --bg:#141917; --surface:#1C2320; --ink:#E4EBE7; --muted:#97A49E; --line:#2F3934;
+  --seed:#6FC2AE; --seed-soft:#1F3631; --owner:#E2A752; --owner-soft:#3A2F1E; --warn:#E07C70; }
+html{scroll-padding-top:env(safe-area-inset-top,0px);height:100%}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;height:100%;background:var(--bg);color:var(--ink);font:16px/1.5 var(--sans);-webkit-text-size-adjust:100%}
+button,input,textarea,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--seed);outline-offset:2px}
+.app{max-width:640px;margin:0 auto;height:100%;display:flex;flex-direction:column}
+header{padding:14px 18px 10px;border-bottom:1px solid var(--line)}
+.who{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.who h1{font:600 1.5rem/1.2 var(--serif);margin:0}
+.stage{color:var(--seed);font-size:.95rem}
+.age{color:var(--muted);font-size:.85rem;margin-left:auto}
+nav{display:flex;gap:4px;margin-top:10px;overflow-x:auto}
+nav button{border:0;background:none;padding:6px 10px;border-radius:8px;color:var(--muted);white-space:nowrap}
+nav button[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:inset 0 0 0 1px var(--line)}
+main{flex:1;overflow-y:auto;padding:16px 18px 24px}
+.panel[hidden]{display:none}
+.stream{display:flex;flex-direction:column;gap:10px}
+.msg{max-width:88%;padding:9px 13px;border-radius:14px;word-wrap:break-word;white-space:pre-wrap}
+.msg.owner{align-self:flex-end;background:var(--owner-soft);border-bottom-right-radius:4px}
+.msg.seed{align-self:flex-start;background:var(--seed-soft);font-family:var(--serif);font-style:italic;border-bottom-left-radius:4px}
+.msg.seed .keep{display:block;margin-top:6px;font:500 .8rem var(--sans);font-style:normal;background:none;border:0;padding:0;color:var(--seed);text-decoration:underline}
+.msg.seed .kept{display:block;margin-top:6px;font:.8rem var(--sans);font-style:normal;color:var(--muted)}
+.note{align-self:center;color:var(--muted);font-size:.85rem;text-align:center;max-width:90%}
+.proposal{align-self:stretch;border:1px solid var(--seed);border-radius:12px;padding:12px 14px;background:var(--surface)}
+.proposal p{margin:0 0 10px;font-family:var(--serif)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.btn{border:1px solid var(--line);background:var(--surface);padding:8px 14px;border-radius:10px}
+.btn.sign{background:var(--owner);border-color:var(--owner);color:#1d1406;font-weight:600}
+.btn.primary{background:var(--seed);border-color:var(--seed);color:var(--surface);font-weight:600}
+.btn:disabled{opacity:.5;cursor:default}
+.composer{border-top:1px solid var(--line);padding:10px 14px;display:flex;gap:8px;background:var(--bg)}
+.composer textarea{flex:1;resize:none;border:1px solid var(--line);border-radius:12px;padding:9px 12px;background:var(--surface);min-height:44px;max-height:140px}
+h2{font:600 1.15rem/1.3 var(--serif);margin:22px 0 8px}
+h2:first-child{margin-top:0}
+p{margin:0 0 12px;max-width:62ch}
+.muted{color:var(--muted)}
+.tier{border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:10px;background:var(--surface)}
+.tier.open{border-color:var(--owner)}
+.tier h3{margin:0 0 4px;font-size:1rem;font-weight:600}
+.tier .state{font-size:.85rem;color:var(--muted);margin-bottom:8px}
+.tier.open .state{color:var(--owner)}
+textarea.big{width:100%;min-height:110px;border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--bg);margin:6px 0}
+input[type=text]{width:100%;border:1px solid var(--line);border-radius:10px;padding:9px 12px;background:var(--surface)}
+.chart{width:100%;height:180px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin:12px 0}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px 10px}
+.stat b{display:block;font:600 1.2rem var(--serif)}
+.stat span{font-size:.8rem;color:var(--muted)}
+.ledger{font-size:.82rem;border:1px solid var(--line);border-radius:10px;max-height:260px;overflow:auto;background:var(--surface)}
+.ledger div{padding:6px 10px;border-bottom:1px solid var(--line);display:flex;gap:8px}
+.ledger div:last-child{border-bottom:0}
+.ledger .k{min-width:84px;color:var(--seed)}
+.ledger .k.s{color:var(--owner);font-weight:600}
+.ledger .h{margin-left:auto;color:var(--muted);font-variant-numeric:tabular-nums}
+fieldset{border:0;padding:0;margin:0 0 16px}
+legend{font-weight:600;margin-bottom:6px;padding:0}
+.choices{display:flex;flex-wrap:wrap;gap:6px}
+.choices label{border:1px solid var(--line);border-radius:999px;padding:5px 12px;background:var(--surface)}
+.choices input{margin-right:6px}
+.ok{color:var(--seed)} .bad{color:var(--warn)}
+.birth{max-width:520px;margin:6vh auto 0;padding:0 18px}
+.birth h1{font:600 2rem/1.15 var(--serif);margin:0 0 14px}
+.birth .lede{font-family:var(--serif);font-size:1.1rem}
+
+.overlay{position:fixed;inset:0;background:rgba(10,16,13,.45);display:grid;place-items:center;padding:20px;z-index:10}
+.dialog{background:var(--surface);border-radius:14px;padding:18px;max-width:420px;width:100%;box-shadow:0 10px 40px rgba(0,0,0,.25)}
+.dialog p{font-family:var(--serif)}
+@media (prefers-reduced-motion:no-preference){ .msg.seed.new{animation:arrive .5s ease-out} @keyframes arrive{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}} }
+</style>
+</head>
+<body>
+<div class="app" id="app"></div>
+<script>
+
+// Raised Voice core: a character-level learner that starts knowing nothing.
+// Genome = axes only (max context order, base alphabet). No inherited text.
+class Voice {
+  constructor(order = 5, baseAlphabet = 256) {
+    this.N = order;
+    this.base = baseAlphabet;
+    this.reset();
+  }
+  reset() {
+    this.tables = [];
+    for (let k = 0; k <= this.N; k++) this.tables.push(new Map());
+    this.vocab = new Map();
+    this.units = 0;
+  }
+  // Each piece of text is treated as one utterance: it follows "\n" and ends with "\n".
+  add(text) {
+    const u = Array.from(text.replace(/\r/g, ''));
+    u.push('\n');
+    const h = ['\n'];
+    for (const c of u) {
+      let s = '';
+      for (let k = 0; k <= this.N && k <= h.length; k++) {
+        if (k > 0) s = h[h.length - k] + s;
+        const t = this.tables[k];
+        let e = t.get(s);
+        if (!e) { e = { n: 0, m: new Map() }; t.set(s, e); }
+        e.n++;
+        e.m.set(c, (e.m.get(c) || 0) + 1);
+      }
+      this.vocab.set(c, (this.vocab.get(c) || 0) + 1);
+      this.units++;
+      h.push(c);
+      if (h.length > this.N) h.shift();
+    }
+  }
+  ctxKeys(h) {
+    const keys = [''];
+    let s = '';
+    for (let k = 1; k <= this.N && k <= h.length; k++) { s = h[h.length - k] + s; keys.push(s); }
+    return keys;
+  }
+  prob(h, c) {
+    let p = 1 / (this.base + this.vocab.size);
+    const keys = this.ctxKeys(h);
+    for (let k = 0; k < keys.length; k++) {
+      const e = this.tables[k].get(keys[k]);
+      if (!e) continue;
+      const types = e.m.size;
+      p = ((e.m.get(c) || 0) + types * p) / (e.n + types);
+    }
+    return p;
+  }
+  // Average surprise in bits per character, scored BEFORE the text is learned.
+  bits(text) {
+    const u = Array.from(text.replace(/\r/g, ''));
+    u.push('\n');
+    const h = ['\n'];
+    let total = 0;
+    for (const c of u) {
+      total += -Math.log2(this.prob(h, c));
+      h.push(c);
+      if (h.length > this.N) h.shift();
+    }
+    return total / u.length;
+  }
+  sampleNext(h, rand) {
+    const keys = this.ctxKeys(h);
+    for (let k = keys.length - 1; k >= 0; k--) {
+      const e = this.tables[k].get(keys[k]);
+      if (!e) continue;
+      const types = e.m.size;
+      if (rand() * (e.n + types) < e.n) {
+        let r = rand() * e.n;
+        for (const [ch, cnt] of e.m) { r -= cnt; if (r < 0) return ch; }
+      }
+    }
+    // Lowest level: anything it has ever heard, uniformly.
+    const all = [...this.vocab.keys()];
+    return all[Math.floor(rand() * all.length)];
+  }
+  speak(prompt, maxLen = 140, rand = Math.random) {
+    if (this.vocab.size === 0) return null;
+    const h = Array.from('\n' + prompt + '\n').slice(-this.N);
+    let out = '';
+    for (let i = 0; i < maxLen; i++) {
+      const c = this.sampleNext(h, rand);
+      if (c === '\n') { if (out.trim().length) break; else continue; }
+      out += c;
+      h.push(c);
+      if (h.length > this.N) h.shift();
+    }
+    return out.trim();
+  }
+}
+
+
+
+const APP_VERSION = 'genesis-seed-0.1';
+const BACKUP_FORMAT = 'genesis-seed-backup-1';
+const GENOME = { order: 5, base_alphabet: 256, learner: 'character-level, Witten-Bell interpolation', inherited_text: 'none' };
+const BUDGET = 600000; // characters of read text the phone rebuilds from
+
+// ---------- tiny DOM helper ----------
+function h(tag, attrs, ...kids) {
+  const el = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs || {})) {
+    if (v == null || v === false) continue;
+    if (k.startsWith('on')) el.addEventListener(k.slice(2), v);
+    else if (k === 'class') el.className = v;
+    else el.setAttribute(k, v === true ? '' : v);
+  }
+  for (const kid of kids.flat()) if (kid != null && kid !== false) el.append(kid.nodeType ? kid : String(kid));
+  return el;
+}
+
+// ---------- storage (IndexedDB, falls back to memory) ----------
+const store = (() => {
+  let dbp = null; const mem = new Map(); let ok = true;
+  function open() {
+    if (dbp) return dbp;
+    dbp = new Promise((res) => {
+      try {
+        const r = indexedDB.open('raised-voice-beta', 1);
+        r.onupgradeneeded = () => r.result.createObjectStore('kv');
+        r.onsuccess = () => res(r.result);
+        r.onerror = () => { ok = false; res(null); };
+      } catch (e) { ok = false; res(null); }
+    });
+    return dbp;
+  }
+  async function get(k) {
+    const db = await open(); if (!db) return mem.get(k);
+    return new Promise((res) => { try { const q = db.transaction('kv').objectStore('kv').get(k); q.onsuccess = () => res(q.result); q.onerror = () => res(undefined); } catch (e) { res(mem.get(k)); } });
+  }
+  async function put(k, v) {
+    const db = await open(); if (!db) { mem.set(k, v); return; }
+    return new Promise((res) => { try { const tx = db.transaction('kv', 'readwrite'); tx.objectStore('kv').put(v, k); tx.oncomplete = () => res(); tx.onerror = () => { ok = false; mem.set(k, v); res(); }; } catch (e) { ok = false; mem.set(k, v); res(); } });
+  }
+  async function clear() {
+    const db = await open(); mem.clear(); if (!db) return;
+    return new Promise((res) => { const tx = db.transaction('kv', 'readwrite'); tx.objectStore('kv').clear(); tx.oncomplete = () => res(); tx.onerror = () => res(); });
+  }
+  return { get, put, clear, get ok() { return ok; } };
+})();
+
+// ---------- crypto ----------
+const subtle = (globalThis.crypto && crypto.subtle) || null;
+function canon(x) {
+  if (Array.isArray(x)) return '[' + x.map(canon).join(',') + ']';
+  if (x && typeof x === 'object') return '{' + Object.keys(x).sort().map(k => JSON.stringify(k) + ':' + canon(x[k])).join(',') + '}';
+  return JSON.stringify(x);
+}
+const hex = (buf) => [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
+async function sha256(str) { return hex(await subtle.digest('SHA-256', new TextEncoder().encode(str))); }
+const b64 = (buf) => btoa(String.fromCharCode(...new Uint8Array(buf)));
+const unb64 = (s) => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+const ALG = { name: 'ECDSA', namedCurve: 'P-256' };
+const SIG = { name: 'ECDSA', hash: 'SHA-256' };
+
+
+// ---------- in-page dialog (browser confirm/prompt can be blocked in embedded viewers) ----------
+function ask(message, { input = false, okLabel = 'OK', danger = false } = {}) {
+  return new Promise((resolve) => {
+    const field = input ? h('input', { type: 'text', 'aria-label': 'Confirm' }) : null;
+    const close = (v) => { overlay.remove(); resolve(v); };
+    const ok = h('button', { class: 'btn ' + (danger ? '' : 'sign'), style: danger ? 'color:var(--warn)' : null, onclick: () => close(input ? field.value : true) }, okLabel);
+    const overlay = h('div', { class: 'overlay', role: 'dialog', 'aria-modal': 'true' },
+      h('div', { class: 'dialog' }, ...message.split('\n\n').map(p => h('p', {}, p)), field,
+        h('div', { class: 'row', style: 'margin-top:12px' }, ok, h('button', { class: 'btn', onclick: () => close(input ? null : false) }, 'Cancel'))));
+    document.body.append(overlay); (field || ok).focus();
+  });
+}
+
+// ---------- state ----------
+let S = null;       // persisted state
+let KEYS = null;    // owner keypair (private key never exported)
+const voice = new Voice(GENOME.order, GENOME.base_alphabet);
+let tab = 'raise';
+let INTEGRITY = null; // result of the record check run on open
+const seedId = () => (S && S.ledger.length ? S.ledger[0].hash.slice(0, 12) : '');
+
+async function save() { await store.put('state', S); }
+
+async function append(kind, body, signed = false) {
+  const prev = S.ledger.length ? S.ledger[S.ledger.length - 1].hash : '0'.repeat(64);
+  const core = { i: S.ledger.length, t: Date.now(), kind, body, prev };
+  const entry = { ...core, hash: await sha256(canon(core)) };
+  if (signed) entry.sig = b64(await subtle.sign(SIG, KEYS.privateKey, new TextEncoder().encode(entry.hash)));
+  S.ledger.push(entry);
+  return entry;
+}
+
+async function verifyLedger() {
+  const L = S.ledger;
+  if (!L.length || L[0].kind !== 'genesis') return { ok: false, why: 'No genesis entry.' };
+  let pub;
+  try { pub = await subtle.importKey('jwk', L[0].body.owner_public_key, ALG, false, ['verify']); }
+  catch (e) { return { ok: false, why: 'Owner key in genesis cannot be read.' }; }
+  let prev = '0'.repeat(64), signed = 0;
+  for (const e of L) {
+    const core = { i: e.i, t: e.t, kind: e.kind, body: e.body, prev: e.prev };
+    if (e.prev !== prev) return { ok: false, why: `Entry ${e.i} does not follow entry ${e.i - 1}.` };
+    if (await sha256(canon(core)) !== e.hash) return { ok: false, why: `Entry ${e.i} was altered after it was written.` };
+    const needsSig = e.kind === 'genesis' || e.kind === 'tier_opened';
+    if (needsSig) {
+      if (!e.sig) return { ok: false, why: `Entry ${e.i} (${e.kind}) is missing the owner's signature.` };
+      const good = await subtle.verify(SIG, pub, unb64(e.sig), new TextEncoder().encode(e.hash));
+      if (!good) return { ok: false, why: `Entry ${e.i} (${e.kind}) has a signature that does not match the owner's key.` };
+      signed++;
+    }
+    prev = e.hash;
+  }
+  return { ok: true, why: `${L.length} entries chained, ${signed} owner signatures valid.` };
+}
+
+// ---------- the seed's learning ----------
+function paragraphs(text) {
+  return text.replace(/\r/g, '').split(/\n\s*\n/).map(p => p.replace(/\s*\n\s*/g, ' ').trim()).filter(Boolean);
+}
+function rebuild() {
+  voice.reset();
+  for (const x of S.stream) if ((x.role === 'owner') || (x.role === 'seed' && x.kept)) voice.add(x.text);
+  let used = 0;
+  for (const t of S.texts) {
+    for (const p of paragraphs(t.text)) {
+      if (used + p.length > BUDGET) return;
+      voice.add(p); used += p.length;
+    }
+  }
+}
+function recentSurprise(n = 5) {
+  const s = S.surprise.slice(-n);
+  return s.length ? s.reduce((a, b) => a + b.b, 0) / s.length : null;
+}
+function stage() {
+  if (voice.vocab.size === 0) return 'Silent — has not heard anything yet';
+  const r = recentSurprise();
+  if (r == null || r >= 6) return 'Listening';
+  if (r >= 5) return 'Babbling';
+  if (r >= 4) return 'Making sounds';
+  if (r >= 3) return 'Finding words';
+  return 'Putting words together';
+}
+function ownerCount() { return S.stream.filter(x => x.role === 'owner').length; }
+function ageText() {
+  const ms = Date.now() - S.seed.born, hrs = ms / 3.6e6;
+  if (hrs < 1) return 'born ' + Math.max(1, Math.round(ms / 60000)) + ' min ago';
+  if (hrs < 48) return Math.round(hrs) + ' hours old';
+  return 'day ' + Math.floor(hrs / 24);
+}
+
+// ---------- proposals: the seed may ask, only the owner may open ----------
+const TIERS = {
+  1: { name: 'Texts you choose', ask: 'Your seed is asking to be read to. Opening this lets you give it texts you choose — letters, stories, scripture, anything you hold.' },
+  2: { name: 'A library', ask: 'Your seed is asking for a library. Opening this lets you give it whole public-domain books in its language.' },
+};
+function maybePropose() {
+  const n = ownerCount();
+  const pending = (t) => S.stream.some(x => x.role === 'proposal' && x.tier === t && x.status === 'pending');
+  const lastDecline = (t) => S.declines[t] || 0;
+  if (!S.tiers[1] && !pending(1) && n >= 12 && (!lastDecline(1) || n - lastDecline(1) >= 15)) return 1;
+  const r = recentSurprise();
+  if (S.tiers[1] && !S.tiers[2] && !pending(2) && n >= 30 && r != null && r < 4.5 && (!lastDecline(2) || n - lastDecline(2) >= 15)) return 2;
+  return 0;
+}
+async function propose(t) {
+  S.stream.push({ role: 'proposal', tier: t, status: 'pending', t: Date.now() });
+  await append('request', { tier: t });
+}
+async function openTier(t, item) {
+  if (S.tiers[t]) return;
+  const ok = await ask(`Sign to open tier ${t}: ${TIERS[t].name}?\n\nYour signature permits the seed to be given this kind of text. It does not choose what the seed learns from it.`, { okLabel: 'Sign' });
+  if (!ok) return;
+  await append('tier_opened', { tier: t }, true);
+  S.tiers[t] = Date.now();
+  for (const x of S.stream) if (x.role === 'proposal' && x.tier === t && x.status === 'pending') x.status = 'signed';
+  S.stream.push({ role: 'note', text: `You signed. Tier ${t} is open — add texts from the Library tab.`, t: Date.now() });
+  await save(); render();
+}
+async function declineTier(t, item) {
+  item.status = 'declined';
+  S.declines[t] = ownerCount();
+  await append('request_declined', { tier: t });
+  await save(); render();
+}
+
+// ---------- raising loop ----------
+async function hear(text) {
+  text = text.trim(); if (!text) return;
+  const b = voice.bits(text);
+  S.surprise.push({ t: Date.now(), b: Math.round(b * 1000) / 1000 });
+  S.stream.push({ role: 'owner', text, t: Date.now() });
+  voice.add(text);
+  await append('heard', { chars: Array.from(text).length, surprise_bits: Math.round(b * 1000) / 1000 });
+  await save(); render();
+  await new Promise(r => setTimeout(r, 450 + Math.random() * 500));
+  const said = voice.speak(text);
+  if (said) {
+    S.stream.push({ role: 'seed', text: said, t: Date.now(), kept: false, fresh: true });
+    await append('spoke', { chars: Array.from(said).length });
+  }
+  const p = maybePropose(); if (p) await propose(p);
+  await save(); render();
+}
+async function keep(item) {
+  if (item.kept) return;
+  item.kept = true; voice.add(item.text);
+  await append('kept', { chars: Array.from(item.text).length });
+  await save(); render();
+}
+async function readText(tier, title, text) {
+  text = text.trim(); if (!text) return 'Add some text first.';
+  if (!S.tiers[tier]) return 'This tier is not open.';
+  const sha = await sha256(text);
+  if (S.texts.some(x => x.sha === sha)) return 'Your seed has already read this text.';
+  const rec = { id: sha.slice(0, 12), tier, title: title.trim() || 'Untitled', chars: Array.from(text).length, sha, text, at: Date.now() };
+  S.texts.push(rec);
+  await append('read', { tier, title: rec.title, chars: rec.chars, sha256: sha });
+  rebuild();
+  S.stream.push({ role: 'note', text: `Read “${rec.title}” to the seed (${rec.chars.toLocaleString()} characters).`, t: Date.now() });
+  await save();
+  return null;
+}
+
+// ---------- backup and restore ----------
+async function offerFile(filename, text) {
+  try {
+    const dl = globalThis.claude && typeof claude.use === 'function' ? await claude.use('downloads') : null;
+    if (dl) { await dl.save({ filename, data: text }); return 'saved'; }
+  } catch (e) { if (e && e.code === 'declined') return 'declined'; }
+  const url = URL.createObjectURL(new Blob([text], { type: 'application/json' }));
+  const link = h('a', { href: url, download: filename }); document.body.append(link); link.click(); link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 4000);
+  return 'saved';
+}
+async function backup() {
+  let priv = null;
+  try { priv = await subtle.exportKey('jwk', KEYS.privateKey); } catch (e) { priv = null; }
+  const file = { format: BACKUP_FORMAT, app: APP_VERSION, seed_id: seedId(), made: new Date().toISOString(), state: S, owner_private_key: priv };
+  const day = new Date().toISOString().slice(0, 10);
+  const safe = S.seed.name.replace(/[^\p{L}\p{N}_-]+/gu, '-').slice(0, 40) || 'seed';
+  const r = await offerFile(`${safe}-seed-${day}.json`, JSON.stringify(file));
+  if (r === 'saved') { S.lastBackup = Date.now(); await append('backed_up', { with_key: !!priv }); await save(); const b = document.getElementById('lastb'); if (b) b.textContent = 'Last backup: ' + new Date(S.lastBackup).toLocaleString(); }
+  return { r, priv: !!priv };
+}
+async function restore(text) {
+  let f; try { f = JSON.parse(text); } catch (e) { return 'That file is not a seed backup.'; }
+  if (!f || f.format !== BACKUP_FORMAT || !f.state || !Array.isArray(f.state.ledger)) return 'That file is not a seed backup.';
+  const prevS = S; S = f.state;
+  const v = await verifyLedger();
+  if (!v.ok) { S = prevS; return 'This backup failed its record check: ' + v.why; }
+  if (!f.owner_private_key) { S = prevS; return 'This backup has no owner key, so it cannot be restored as a living seed.'; }
+  let keys;
+  try {
+    const privateKey = await subtle.importKey('jwk', f.owner_private_key, ALG, true, ['sign']);
+    const publicKey = await subtle.importKey('jwk', S.ledger[0].body.owner_public_key, ALG, true, ['verify']);
+    const probe = new TextEncoder().encode('genesis-seed-key-probe');
+    const sig = await subtle.sign(SIG, privateKey, probe);
+    if (!(await subtle.verify(SIG, publicKey, sig, probe))) throw new Error('mismatch');
+    keys = { privateKey, publicKey };
+  } catch (e) { S = prevS; return 'The key in this backup does not belong to this seed.'; }
+  KEYS = keys; S.declines = S.declines || {};
+  await append('restored', { from_backup_made: f.made || null });
+  await store.put('keys', KEYS); await save();
+  rebuild(); INTEGRITY = await verifyLedger(); tab = 'raise';
+  return null;
+}
+
+// ---------- views ----------
+function render() {
+  const root = document.getElementById('app');
+  root.replaceChildren();
+  if (!S) { root.append(birthView()); return; }
+  root.append(
+    h('header', {},
+      h('div', { class: 'who' }, h('h1', {}, S.seed.name), h('span', { class: 'stage' }, stage()), h('span', { class: 'age' }, ageText())),
+      INTEGRITY && !INTEGRITY.ok ? h('p', { class: 'bad', style: 'margin:8px 0 0' }, 'Its record failed the check on open: ' + INTEGRITY.why) : null,
+      h('nav', { role: 'tablist' }, ...[['raise', 'Raise'], ['library', 'Library'], ['record', 'Record'], ['feedback', 'Feedback']].map(([k, label]) =>
+        h('button', { role: 'tab', 'aria-selected': String(tab === k), onclick: () => { tab = k; render(); } }, label)))),
+    h('main', { id: 'main' }, tab === 'raise' ? raiseView() : tab === 'library' ? libraryView() : tab === 'record' ? recordView() : feedbackView()),
+    tab === 'raise' ? composer() : ''
+  );
+  if (tab === 'raise') { const m = document.getElementById('main'); m.scrollTop = m.scrollHeight; }
+}
+
+function birthView() {
+  const name = h('input', { type: 'text', placeholder: 'A name for your seed', maxlength: '40', 'aria-label': 'Seed name' });
+  const err = h('p', { class: 'bad' });
+  const go = h('button', { class: 'btn primary', onclick: async () => {
+    if (!subtle) { err.textContent = 'This browser cannot sign. Open this page over https in a current browser.'; return; }
+    const n = name.value.trim(); if (!n) { err.textContent = 'Give your seed a name to begin.'; name.focus(); return; }
+    go.disabled = true;
+    KEYS = await subtle.generateKey(ALG, true, ['sign', 'verify']);
+    const pubJwk = await subtle.exportKey('jwk', KEYS.publicKey);
+    S = { seed: { name: n, born: Date.now(), version: APP_VERSION }, ledger: [], stream: [], texts: [], surprise: [], tiers: {}, declines: {} };
+    await append('genesis', { name: n, genome: GENOME, owner_public_key: pubJwk, app: APP_VERSION }, true);
+    S.stream.push({ role: 'note', text: `${n} was born knowing no words, in no language. It learns only from what you give it. Speak to it in any language you like.`, t: Date.now() });
+    await store.put('keys', KEYS); await save(); render();
+  } }, 'Begin');
+  return h('div', { class: 'birth' },
+    h('h1', {}, 'Genesis Seed'),
+    h('p', { class: 'lede' }, 'This seed is born knowing no words. It learns language only from you — what you say to it, and what you choose to let it read.'),
+    h('p', { class: 'muted' }, 'This is the first beta seed, not a finished product. It is a small learner, not a chatbot: it will babble for a while, and how far it grows depends on how much it hears. Everything stays on this device.'),
+    h('p', { class: 'muted' }, 'You hold its key. It can ask for more to read, but only your signature can open it.'),
+    name, h('div', { class: 'row', style: 'margin-top:12px' }, go), err,
+    h('h2', {}, 'Already raising one?'),
+    h('p', { class: 'muted' }, 'Bring a seed over from another device with its backup file.'),
+    (() => {
+      const fi = h('input', { type: 'file', accept: '.json,application/json', 'aria-label': 'Seed backup file' });
+      fi.addEventListener('change', async () => {
+        const f = fi.files[0]; if (!f) return;
+        if (!subtle) { err.textContent = 'This browser cannot check signatures. Open this page in a current browser.'; return; }
+        err.textContent = 'Checking its record…';
+        const e = await restore(await f.text());
+        if (e) { err.textContent = e; fi.value = ''; return; }
+        render();
+      });
+      return fi;
+    })());
+}
+
+function raiseView() {
+  const wrap = h('div', { class: 'stream' });
+  for (const x of S.stream) {
+    if (x.role === 'owner') wrap.append(h('div', { class: 'msg owner' }, x.text));
+    else if (x.role === 'seed') {
+      const el = h('div', { class: 'msg seed' + (x.fresh ? ' new' : '') }, x.text,
+        x.kept ? h('span', { class: 'kept' }, 'Kept — it learns from this') :
+          h('button', { class: 'keep', onclick: () => keep(x) }, 'Keep this — let it learn from it'));
+      x.fresh = false; wrap.append(el);
+    }
+    else if (x.role === 'note') wrap.append(h('div', { class: 'note' }, x.text));
+    else if (x.role === 'proposal') {
+      const t = x.tier;
+      wrap.append(h('div', { class: 'proposal' }, h('p', {}, TIERS[t].ask),
+        x.status === 'pending' ? h('div', { class: 'row' },
+          h('button', { class: 'btn sign', onclick: () => openTier(t, x) }, `Sign to open tier ${t}`),
+          h('button', { class: 'btn', onclick: () => declineTier(t, x) }, 'Not yet')) :
+          h('div', { class: 'muted' }, x.status === 'signed' ? 'You signed this.' : 'You said not yet.')));
+    }
+  }
+  if (ownerCount() === 0) wrap.append(h('div', { class: 'note' }, 'Say anything. Short, ordinary sentences you would say to a little one work well.'));
+  return wrap;
+}
+
+function composer() {
+  const ta = h('textarea', { rows: '1', placeholder: `Talk to ${S.seed.name}`, 'aria-label': 'Message' });
+  const send = async () => { const v = ta.value; ta.value = ''; await hear(v); const t = document.querySelector('.composer textarea'); if (t) t.focus(); };
+  ta.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } });
+  return h('div', { class: 'composer' }, ta, h('button', { class: 'btn primary', onclick: send }, 'Say'));
+}
+
+function tierBox(t, title, desc, open, body) {
+  return h('div', { class: 'tier' + (open ? ' open' : '') }, h('h3', {}, `Tier ${t} · ${title}`),
+    h('div', { class: 'state' }, open ? (t === 0 ? 'Open from birth' : `Opened by your signature, ${new Date(open).toLocaleDateString()}`) : 'Closed'),
+    h('p', { class: 'muted' }, desc), body);
+}
+function textForm(t) {
+  const title = h('input', { type: 'text', placeholder: 'Title', 'aria-label': 'Title' });
+  const body = h('textarea', { class: 'big', placeholder: 'Paste text here, or choose a .txt file below', 'aria-label': 'Text' });
+  const file = h('input', { type: 'file', accept: '.txt,text/plain', 'aria-label': 'Text file' });
+  const msg = h('p', { class: 'muted' });
+  file.addEventListener('change', async () => {
+    const f = file.files[0]; if (!f) return;
+    body.value = await f.text(); if (!title.value) title.value = f.name.replace(/\.txt$/i, '');
+    msg.textContent = `${Array.from(body.value).length.toLocaleString()} characters loaded.`;
+  });
+  const btn = h('button', { class: 'btn primary', onclick: async () => {
+    btn.disabled = true; msg.textContent = 'Reading…';
+    await new Promise(r => setTimeout(r, 30));
+    const e = await readText(t, title.value, body.value);
+    btn.disabled = false;
+    if (e) { msg.textContent = e; return; }
+    title.value = ''; body.value = ''; file.value = ''; render();
+  } }, 'Read it to the seed');
+  return h('div', {}, title, body, file, h('div', { class: 'row', style: 'margin-top:8px' }, btn), msg);
+}
+function libraryView() {
+  const list = (t) => {
+    const xs = S.texts.filter(x => x.tier === t);
+    return xs.length ? h('ul', {}, xs.map(x => h('li', {}, `${x.title} — ${x.chars.toLocaleString()} characters`))) : null;
+  };
+  const used = S.texts.reduce((a, x) => a + x.chars, 0);
+  return h('div', {},
+    h('p', {}, 'What your seed may read is decided by you. It can ask; only your signature opens a tier. Inside an open tier, reading needs no further signature.'),
+    tierBox(0, 'Your words', 'Everything you say to it, plus any of its own lines you choose to keep. Its unkept babble is never learned.', S.seed.born, null),
+    tierBox(1, 'Texts you choose', 'Letters, stories, songs you wrote, scripture — text you hold and want it to hear.', S.tiers[1],
+      S.tiers[1] ? h('div', {}, list(1), textForm(1)) : h('button', { class: 'btn sign', onclick: () => openTier(1) }, 'Sign to open tier 1')),
+    tierBox(2, 'A library', 'Whole public-domain books in its language. Project Gutenberg offers plain-text (.txt) books in many languages.', S.tiers[2],
+      S.tiers[2] ? h('div', {}, list(2), textForm(2)) : h('button', { class: 'btn sign', onclick: () => openTier(2), disabled: !S.tiers[1] }, S.tiers[1] ? 'Sign to open tier 2' : 'Open tier 1 first')),
+    tierBox(3, 'The open web', 'Not available in this beta. A voice raised on whoever writes the most is not raised by you.', null, null),
+    used > BUDGET ? h('p', { class: 'muted' }, `Your seed has been given ${used.toLocaleString()} characters to read. This beta learns from the first ${BUDGET.toLocaleString()} on a phone-sized budget.`) : null);
+}
+
+function chart() {
+  const W = 600, H = 180, P = 28, pts = S.surprise;
+  const svg = (s) => new DOMParser().parseFromString(s, 'image/svg+xml').documentElement;
+  if (pts.length < 2) return h('div', { class: 'chart', style: 'display:grid;place-items:center;color:var(--muted)' }, 'The curve appears after a few messages.');
+  const y = (b) => P / 2 + (1 - Math.min(b, 8) / 8) * (H - P);
+  const x = (i) => P + i * (W - P - 10) / (pts.length - 1);
+  const line = pts.map((p, i) => `${x(i).toFixed(1)},${y(p.b).toFixed(1)}`).join(' ');
+  const grid = [2, 4, 6, 8].map(b => `<line x1="${P}" x2="${W - 8}" y1="${y(b)}" y2="${y(b)}" stroke="var(--line)"/><text x="4" y="${y(b) + 4}" font-size="11" fill="var(--muted)">${b}</text>`).join('');
+  return svg(`<svg class="chart" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="Surprise per message, falling as the seed learns">${grid}<polyline points="${line}" fill="none" stroke="var(--seed)" stroke-width="2" vector-effect="non-scaling-stroke"/></svg>`);
+}
+function recordView() {
+  const heard = S.stream.filter(x => x.role === 'owner').reduce((a, x) => a + Array.from(x.text).length, 0);
+  const said = S.stream.filter(x => x.role === 'seed').length;
+  const kept = S.stream.filter(x => x.role === 'seed' && x.kept).length;
+  const read = S.texts.reduce((a, x) => a + x.chars, 0);
+  const r = recentSurprise();
+  const result = h('p', { class: 'muted' });
+  const L = S.ledger.slice(-120).reverse();
+  return h('div', {},
+    h('h2', {}, 'How surprised it is by you'),
+    h('p', { class: 'muted' }, 'Each time you speak, the seed guesses your words one character at a time before learning them. Fewer bits means fewer surprises: it is learning your language. A newborn starts at 8.'),
+    chart(),
+    h('div', { class: 'stats' },
+      h('div', { class: 'stat' }, h('b', {}, r == null ? '—' : r.toFixed(2)), h('span', {}, 'recent surprise, bits per character')),
+      h('div', { class: 'stat' }, h('b', {}, heard.toLocaleString()), h('span', {}, 'characters heard from you')),
+      h('div', { class: 'stat' }, h('b', {}, read.toLocaleString()), h('span', {}, 'characters read')),
+      h('div', { class: 'stat' }, h('b', {}, `${said} / ${kept}`), h('span', {}, 'things it said / you kept')),
+      h('div', { class: 'stat' }, h('b', {}, voice.vocab.size.toLocaleString()), h('span', {}, 'distinct characters known'))),
+    h('h2', {}, 'Its record'),
+    h('p', { class: 'muted' }, 'Every event is chained to the one before it. Births and opened tiers carry your signature. The record holds counts, not your words.'),
+    h('div', { class: 'row', style: 'margin-bottom:8px' }, h('button', { class: 'btn', onclick: async () => {
+      result.textContent = 'Checking…'; const v = await verifyLedger();
+      result.className = v.ok ? 'ok' : 'bad'; result.textContent = (v.ok ? 'Intact. ' : 'Broken. ') + v.why;
+    } }, 'Check the record')),
+    result,
+    h('div', { class: 'ledger' }, L.map(e => h('div', {},
+      h('span', { class: 'k' + (e.sig ? ' s' : '') }, e.kind.replace('_', ' ')),
+      h('span', {}, new Date(e.t).toLocaleString([], { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })),
+      h('span', { class: 'h' }, e.hash.slice(0, 8))))),
+    h('h2', {}, 'What this beta is'),
+    h('p', { class: 'muted' }, 'A small character-level learner. Its only inheritance is how it learns, never what. It will not become a chatbot; this test is about what raising feels like, and whether people keep at it.'),
+    h('h2', {}, 'Keep it safe'),
+    h('p', { class: 'muted' }, store.ok ? 'Your seed lives in this browser on this device only. Clearing site data erases it. A backup file lets you restore it here or move it to another device.' : 'This browser is not saving. Your seed will be lost when you close the page unless you make a backup.'),
+    h('p', { class: 'muted' }, 'The backup holds your seed’s key. Anyone with the file can sign for your seed, so keep it like a house key.'),
+    h('p', { class: 'muted', id: 'lastb' }, S.lastBackup ? 'Last backup: ' + new Date(S.lastBackup).toLocaleString() : 'No backup made yet.'),
+    (() => { const m = h('p', { class: 'muted' }); return h('div', {}, h('div', { class: 'row', style: 'margin-bottom:8px' }, h('button', { class: 'btn primary', onclick: async () => {
+      m.textContent = 'Preparing…'; const { r, priv } = await backup();
+      m.textContent = r === 'declined' ? 'Backup cancelled.' : priv ? 'Backup saved. Restore it from the start screen on any device.' : 'Saved, but this seed was born in the older beta and its key cannot leave the device, so the backup is a record only.';
+    } }, 'Save a backup')), m); })(),
+    h('p', { class: 'muted' }, 'Seed ID: ' + seedId()),
+    h('div', { class: 'row' }, h('button', { class: 'btn', style: 'color:var(--warn)', onclick: async () => {
+      const typed = await ask(`This erases ${S.seed.name} for good, including its key and record.\n\nType its name to confirm.`, { input: true, okLabel: 'Erase', danger: true });
+      if (typed !== S.seed.name) return;
+      await store.clear(); S = null; KEYS = null; voice.reset(); tab = 'raise'; render();
+    } }, 'Erase this seed')));
+}
+
+function feedbackView() {
+  const Q = [
+    ['often', 'How often did you talk to it?', ['Once', 'A few times', 'Most days', 'Every day']],
+    ['return', 'Did watching it grow make you want to come back?', ['Not at all', 'A little', 'Yes', 'Very much']],
+    ['sign', 'Did you understand what signing a tier does?', ['No', 'Partly', 'Yes']],
+  ];
+  const T = [
+    ['firstword', 'When did it first say something that felt like a word to you?'],
+    ['keep', 'What would make you keep raising it?'],
+    ['wrong', 'Anything that felt wrong, confusing, or uncomfortable?'],
+  ];
+  const fields = h('div', {},
+    Q.map(([k, q, opts]) => h('fieldset', {}, h('legend', {}, q), h('div', { class: 'choices' },
+      opts.map(o => h('label', {}, h('input', { type: 'radio', name: k, value: o }), o))))),
+    T.map(([k, q]) => h('fieldset', {}, h('legend', {}, q), h('textarea', { class: 'big', name: k, 'aria-label': q }))));
+  const incl = h('input', { type: 'checkbox', id: 'incl' });
+  const out = h('textarea', { class: 'big', readonly: true, 'aria-label': 'Report', style: 'min-height:160px;display:none' });
+  const msg = h('p', { class: 'muted' });
+  const build = async () => {
+    const ans = {};
+    for (const [k] of Q) { const c = fields.querySelector(`input[name="${k}"]:checked`); ans[k] = c ? c.value : null; }
+    for (const [k] of T) ans[k] = fields.querySelector(`textarea[name="${k}"]`).value.trim() || null;
+    const v = await verifyLedger();
+    const rep = {
+      app: APP_VERSION, made: new Date().toISOString(),
+      device: { mobile: /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent), platform: (navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || null },
+      seed: { id: seedId(), hours_old: Math.round((Date.now() - S.seed.born) / 3.6e6), stage: stage(), distinct_chars: voice.vocab.size },
+      raising: { messages: ownerCount(), distinct_messages: new Set(S.stream.filter(x => x.role === 'owner').map(x => x.text.toLowerCase().trim())).size, backups: S.ledger.filter(e => e.kind === 'backed_up').length, seed_lines: S.stream.filter(x => x.role === 'seed').length, kept: S.stream.filter(x => x.role === 'seed' && x.kept).length,
+        tiers_opened: S.tiers, requests: S.stream.filter(x => x.role === 'proposal').map(x => ({ tier: x.tier, status: x.status })),
+        texts: S.texts.map(x => ({ tier: x.tier, title: x.title, chars: x.chars })) },
+      surprise_curve: S.surprise.map(x => x.b),
+      record: { entries: S.ledger.length, head: S.ledger[S.ledger.length - 1].hash, check: v.ok ? 'intact' : 'broken: ' + v.why },
+      answers: ans,
+      conversation: incl.checked ? S.stream.filter(x => x.role === 'owner' || x.role === 'seed').slice(-60).map(x => ({ who: x.role, text: x.text, kept: x.kept || undefined })) : 'not shared',
+    };
+    out.value = JSON.stringify(rep, null, 2); out.style.display = 'block';
+    try { await navigator.clipboard.writeText(out.value); msg.textContent = 'Copied. Paste it into a message to the person who sent you this seed.'; }
+    catch (e) { out.focus(); out.select(); msg.textContent = 'Select the report above, copy it, and paste it into a message to the person who sent you this seed.'; }
+  };
+  return h('div', {},
+    h('p', {}, 'Nothing is sent anywhere automatically. Answer what you like, build the report, and send it yourself.'),
+    fields,
+    h('fieldset', {}, h('label', {}, incl, ' Include my last 60 messages with the seed (off by default)')),
+    h('div', { class: 'row' }, h('button', { class: 'btn primary', onclick: build }, 'Build and copy report')),
+    msg, out);
+}
+
+// ---------- boot ----------
+(async () => {
+  try {
+    const st = await store.get('state'); const ks = await store.get('keys');
+    if (st && ks) { S = st; KEYS = ks; S.declines = S.declines || {}; rebuild(); if (subtle) INTEGRITY = await verifyLedger(); }
+  } catch (e) { console.error(e); }
+  render();
+})();
+
+
+</script>
+</body>
+</html>

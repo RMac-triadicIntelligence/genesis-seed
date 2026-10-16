@@ -1,0 +1,10 @@
+cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30  ./LICENSE
+265877795ec29f201539c112a8df3f12ac18e36f61360d1ab6424fa563acef19  ./NOTICE
+1906238f3950cd5741b199d597cf61e64b54950d7ed349a56775f3781f444d90  ./README.md
+5a7642823feb2d3e423f6924cdbd0e7c95f3b35b72a3ef18c1126a92a6cd36d3  ./adam-record/adam-ledger-public.json
+621c6c25c26ed36c13548d4a1c2dcf16e1d77bbe6f073322bfcc3ddb213b22e8  ./adam-record/verify_ledger.py
+fb2a624f47c3f6ea70a6a6cae2faadf3b769a1c7194aa6b18d063668ce85aa31  ./genesis-seed-v0.1/README.txt
+36019ebbb7585b71a04bb9a95f40eb84d366b43b906e205ecb694038a78a52d5  ./genesis-seed-v0.1/SHA256SUMS.txt
+03e7bd8f72a2fd11727dd022a6b65d9d9d70e50983cc53902a605ab755d890f5  ./genesis-seed-v0.1/genesis-seed-v0.1.html
+3d2e397122881d7737a48fb80e71cddf4c78cda54ceac7e0905fe945dfab48fd  ./library/the-republic-plato-jowett-gutenberg-1497.txt
+28d693f929f62b8bb135a11b7ba9987439f7a960cc969e32f8cb567c1ef79c97  ./requirements.txt
